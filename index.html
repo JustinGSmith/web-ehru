@@ -2,11 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>title</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <title>ehru</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <!-- <script src="script.js"></script> -->
   </head>
   <body>
-    hello musical instrument
+    <p class="start-message">
+      Click on the browser window or press the tab key to start the app.
+    </p>
+
+    <div class="app-contents">
+      <h1>erhu</h1>
+
+      <button class="mute" data-muted="false">Mute</button>
+      <button class="clear">Clear screen</button>
+      <p class="control-message">
+        Use mouse or arrow keys to control ehru
+      </p>
+
+      <canvas class="canvas">
+        Your browser does not support HTML5 canvas
+      </canvas>
+    </div>
+
+    <!-- Below is your custom application script -->
+
+    <script src="scripts/app.js"></script>
   </body>
 </html>
