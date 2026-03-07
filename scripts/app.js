@@ -8,6 +8,7 @@ window.addEventListener("keydown", init);
 window.addEventListener("click", init);
 
 function oscillator_init(ctx, win) {
+  console.log("creating osc v0");
   // create Oscillator and gain node
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
@@ -38,6 +39,7 @@ function oscillator_init(ctx, win) {
   gainNode.gain.minValue = osc.initialVol;
   gainNode.gain.maxValue = osc.initialVol;
 
+  console.log(osc);
   return osc
 }
 
