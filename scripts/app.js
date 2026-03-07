@@ -7,6 +7,40 @@ appContents.style.display = "none";
 window.addEventListener("keydown", init);
 window.addEventListener("click", init);
 
+function oscillator_init(ctx, win) {
+  // create Oscillator and gain node
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+
+  // connect oscillator to gain node to speakers
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
+
+  // set options for the oscillator
+  oscillator.detune.value = 100; // value in cents
+  oscillator.start(0);
+
+  oscillator.onended = function () {
+    console.log("Your tone has now stopped playing!");
+  };
+
+  osc = {}
+
+  osc.frequency = oscillator.frequency
+  osc.gain = gainNode
+  osc.maxFreq = 6000;
+  osc.maxVol = 0.02;
+  osc.initialVol = 0.001;
+  osc.WIDTH = win.innerWidth;
+  osc.HEIGHT = win.innerHeight;
+
+  gainNode.gain.value = osc.initialVol;
+  gainNode.gain.minValue = osc.initialVol;
+  gainNode.gain.maxValue = osc.initialVol;
+
+  return osc
+}
+
 function init() {
   if (isAppInit) {
     return;
@@ -19,33 +53,7 @@ function init() {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioContext();
 
-  // create Oscillator and gain node
-  const oscillator = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-
-  // connect oscillator to gain node to speakers
-  oscillator.connect(gainNode);
-  gainNode.connect(audioCtx.destination);
-
-  // create initial theremin frequency and volume values
-  const WIDTH = window.innerWidth;
-  const HEIGHT = window.innerHeight;
-
-  const maxFreq = 6000;
-  const maxVol = 0.02;
-  const initialVol = 0.001;
-
-  // set options for the oscillator
-  oscillator.detune.value = 100; // value in cents
-  oscillator.start(0);
-
-  oscillator.onended = function () {
-    console.log("Your tone has now stopped playing!");
-  };
-
-  gainNode.gain.value = initialVol;
-  gainNode.gain.minValue = initialVol;
-  gainNode.gain.maxValue = initialVol;
+  osc = oscillator_init(audioCtx, window)
 
   // Mouse pointer coordinates
   let CurX;
@@ -61,8 +69,8 @@ function init() {
     CurX = e.pageX;
     CurY = e.pageY;
 
-    oscillator.frequency.value = (CurX / WIDTH) * maxFreq;
-    gainNode.gain.value = (CurY / HEIGHT) * maxVol;
+    osc.frequency.value = (CurX / osc.WIDTH) * osc.maxFreq;
+    osc.gain.gain.value = (CurY / osc.HEIGHT) * osc.maxVol;
 
     canvasDraw();
   }
@@ -72,11 +80,11 @@ function init() {
 
   mute.onclick = function () {
     if (mute.getAttribute("data-muted") === "false") {
-      gainNode.disconnect(audioCtx.destination);
+      osc.gain.disconnect(audioCtx.destination);
       mute.setAttribute("data-muted", "true");
       mute.innerHTML = "Unmute";
     } else {
-      gainNode.connect(audioCtx.destination);
+      osc.gain.connect(audioCtx.destination);
       mute.setAttribute("data-muted", "false");
       mute.innerHTML = "Mute";
     }
@@ -90,8 +98,8 @@ function init() {
   const canvas = document.querySelector(".canvas");
   const canvasCtx = canvas.getContext("2d");
 
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
+  canvas.width = osc.WIDTH;
+  canvas.height = osc.HEIGHT;
 
   function canvasDraw() {
     if (KeyFlag) {
@@ -102,7 +110,7 @@ function init() {
       rY = CurY;
     }
 
-    rC = Math.floor((gainNode.gain.value / maxVol) * 30);
+    rC = Math.floor((osc.gain.gain.value / osc.maxVol) * 30);
 
     canvasCtx.globalAlpha = 0.2;
 
@@ -113,9 +121,9 @@ function init() {
         100 +
         i * 10 +
         "," +
-        Math.floor((gainNode.gain.value / maxVol) * 255) +
+        Math.floor((osc.gain.gain.value / osc.maxVol) * 255) +
         "," +
-        Math.floor((oscillator.frequency.value / maxFreq) * 255) +
+        Math.floor((osc.frequency.value / osc.maxFreq) * 255) +
         ")";
       canvasCtx.arc(
         rX + random(0, 50),
@@ -173,20 +181,20 @@ function init() {
       KeyX = 1;
     }
 
-    if (KeyX > WIDTH) {
-      KeyX = WIDTH;
+    if (KeyX > osc.WIDTH) {
+      KeyX = osc.WIDTH;
     }
 
     if (KeyY < 0.01) {
       KeyY = 0.01;
     }
 
-    if (KeyY > HEIGHT) {
-      KeyY = HEIGHT;
+    if (KeyY > osc.HEIGHT) {
+      KeyY = osc.HEIGHT;
     }
 
-    oscillator.frequency.value = (KeyX / WIDTH) * maxFreq;
-    gainNode.gain.value = (KeyY / HEIGHT) * maxVol;
+    osc.frequency.value = (KeyX / osc.WIDTH) * osc.maxFreq;
+    osc.gain.gain.value = (KeyY / osc.HEIGHT) * osc.maxVol;
 
     canvasDraw();
   };
