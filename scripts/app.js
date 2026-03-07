@@ -7,8 +7,34 @@ appContents.style.display = "none";
 window.addEventListener("keydown", init);
 window.addEventListener("click", init);
 
+function granule_init(ctx, win) {
+
+  console.log("creating granule v0");
+  granule = {};
+
+  granule.buffer = new AudioBuffer({
+    numberOfChannels: 2,
+    length: ctx.sampleRate * 2.0,
+    sampleRate: ctx.sampleRate
+  });
+
+  granule.source = ctx.createBufferSource();
+  granule.source.buffer = granule.buffer;
+  granule.source.connect(ctx.destination)
+  source.start();
+  source.onended = () => {
+  // TODO - loop and process again at end of buffer(?)
+  }
+
+  // TODO - storage for partial granules
+  // TODO - fill buffer with granules
+  // TODO - trigger new granules from outside
+
+  return granule;
+}
+
 function oscillator_init(ctx, win) {
-  console.log("creating osc v0");
+  console.log("creating osc v1");
   // create Oscillator and gain node
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
@@ -27,8 +53,8 @@ function oscillator_init(ctx, win) {
 
   osc = {}
 
-  osc.frequency = oscillator.frequency
-  osc.gain = gainNode
+  osc.frequency = oscillator.frequency;
+  osc.gain = gainNode;
   osc.maxFreq = 6000;
   osc.maxVol = 0.02;
   osc.initialVol = 0.001;
@@ -40,7 +66,7 @@ function oscillator_init(ctx, win) {
   gainNode.gain.maxValue = osc.initialVol;
 
   console.log(osc);
-  return osc
+  return osc;
 }
 
 function init() {
@@ -55,7 +81,7 @@ function init() {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioContext();
 
-  osc = oscillator_init(audioCtx, window)
+  osc = oscillator_init(audioCtx, window);
 
   // Mouse pointer coordinates
   let CurX;
