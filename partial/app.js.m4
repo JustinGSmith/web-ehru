@@ -1,13 +1,47 @@
+include(`partial/top_level.js.m4')dnl
 
-const appContents = document.querySelector(".app-contents");
-const startMessage = document.querySelector(".start-message");
-let isAppInit = false;
-appContents.style.display = "none";
+function linear(a,b, x,y) {
+  // linear translation of numbers in range a ... b to range x ... y
+  pad = x
+  trim = a
+  scale = (y - x) / (b - a)
+  function linear_projection(n) {
+    return pad + (scale * (n - trim))
+  }
+  return linear_projection;
+}
 
-window.addEventListener("keydown", init);
-window.addEventListener("click", init);
+function amp_window(amp, dur) {
+  // creates a windowing function in the shape of a sinusoid
+  // start at nadir of sin's range
+  phase = Math.PI * 1.5;
+  increment = 2 * (Math.PI / dur);
+  // translate from range of sin to 0 ... amp
+  lin = linear(-1,1, 0,amp)
+  function window_f() {
+    scalar = Math.sin(phase);
+    phase = phase + increment;
+    return lin(scalar);
+  }
+  return window_f;
+}
 
-function granule_init(ctx, win) {
+pan_lin = linear(-1,1, (Math.PI * 2 * 0.25),(Math.PI * 2 * 0.75));
+pan_amp_lin = linear(-1,1, 0,1);
+
+function pan_amps(n) {
+  // for input -1, r will be at nadir, l will be at peak
+  // for input 1, l will be at nadir, r will be at peak
+
+  pos = pan_lin(n);
+
+  l = sin(pos + Math.PI);
+  r = sin(pos);
+
+  return [pan_amp_lin(l), pan_amp_lin(r)];
+}
+
+function granule_init(ctx) {
 
   console.log("creating granule v0");
   granule = {};
@@ -18,17 +52,60 @@ function granule_init(ctx, win) {
     sampleRate: ctx.sampleRate
   });
 
-  granule.source = ctx.createBufferSource();
-  granule.source.buffer = granule.buffer;
-  granule.source.connect(ctx.destination)
-  source.start();
-  source.onended = () => {
-  // TODO - loop and process again at end of buffer(?)
+  granule.granules = [];
+
+
+  function new_granule(t, hz, amp, dur, pan) {
+    g = {};
+    g.t = t || 0;
+    g.hz = hz || 440;
+    g.amp = amp || 0.8;
+    // 3 = cycle each for fade in + hold + fade out
+    g.dur = ctx.sampleRate * (dur || 3  / g.hz);
+    g.win = amp_window(g.amp, g.dur);
+    g.pos = 0;
+    g.phase = 0;
+    g.incr = (g.hz / ctx.sampleRate) * 2 * Math.PI;
+
+    function next_value() {
+      value = g.win() * Math.sin(g.phase);
+      g.phase = (g.phase + g.incr) % (2 * Math.PI);
+      g.pos = g.pos + 1;
+      pan_a = pan_amps(pan);
+      return [value * pan_a[0], value * pan_a[1]];
+    }
+
+    g.next_value = next_value;
+    granule.granules.push(g);
   }
 
-  // TODO - storage for partial granules
-  // TODO - fill buffer with granules
-  // TODO - trigger new granules from outside
+  granule.new_granule = new_granule;
+
+  function fill_buffer() {
+      // This gives us the actual array that contains the data
+    const buff_l = granule.buffer.getChannelData(0);
+    const buff_r = granule.buffer.getChannelData(1);
+    for (let i = 0; i < granule.buffer.length; i++) {
+	nowBuffering[i] = Math.random() * 2 - 1;
+      }
+    }
+    keep = []
+
+    granule.granules.forEach((g) =>
+    )
+
+  }
+
+  function play_buffer() {
+    fill_buffer();
+    source = ctx.createBufferSource();
+    source.buffer = granule.buffer;
+    source.connect(ctx.destination)
+    source.start();
+    source.onended = () => {
+      play_buffer();
+    }
+  }
 
   return granule;
 }
