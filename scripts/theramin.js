@@ -1,75 +1,3 @@
-include(`partial/top_level.js.m4')dnl
-include(`partial/pure.js.m4')dnl
-
-function granule_init(ctx) {
-
-  console.log("creating granule v0");
-  granule = {};
-
-  granule.buffer = new AudioBuffer({
-    numberOfChannels: 2,
-    length: ctx.sampleRate * 2.0,
-    sampleRate: ctx.sampleRate
-  });
-
-  granule.granules = [];
-
-
-  function new_granule(t, hz, amp, dur, pan) {
-    g = {};
-    g.t = t || 0;
-    g.hz = hz || 440;
-    g.amp = amp || 0.8;
-    // 3 = cycle each for fade in + hold + fade out
-    g.dur = ctx.sampleRate * (dur || 3  / g.hz);
-    g.win = amp_window(g.amp, g.dur);
-    g.pos = 0;
-    g.phase = 0;
-    g.incr = (g.hz / ctx.sampleRate) * 2 * Math.PI;
-
-    function next_value() {
-      value = g.win() * Math.sin(g.phase);
-      g.phase = (g.phase + g.incr) % (2 * Math.PI);
-      g.pos = g.pos + 1;
-      pan_a = pan_amps(pan);
-      return [value * pan_a[0], value * pan_a[1]];
-    }
-
-    g.next_value = next_value;
-    granule.granules.push(g);
-  }
-
-  granule.new_granule = new_granule;
-
-  function fill_buffer() {
-      // This gives us the actual array that contains the data
-    const buff_l = granule.buffer.getChannelData(0);
-    const buff_r = granule.buffer.getChannelData(1);
-    for (let i = 0; i < granule.buffer.length; i++) {
-        nowBuffering[i] = Math.random() * 2 - 1;
-      }
-    }
-    keep = []
-
-    granule.granules.forEach((g) =>
-    )
-
-  }
-
-  function play_buffer() {
-    fill_buffer();
-    source = ctx.createBufferSource();
-    source.buffer = granule.buffer;
-    source.connect(ctx.destination)
-    source.start();
-    source.onended = () => {
-      play_buffer();
-    }
-  }
-
-  return granule;
-}
-
 function oscillator_init(ctx, win) {
   console.log("creating osc v1");
   // create Oscillator and gain node
@@ -266,3 +194,4 @@ function init() {
 
   isAppInit = true;
 }
+

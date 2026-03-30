@@ -38,3 +38,27 @@ function pan_amps(n) {
 
   return [pan_amp_lin(l), pan_amp_lin(r)];
 }
+
+function new_granule(sr, t, hz, amp, dur, pan) {
+  g = {};
+  g.t = t || 0;
+  g.hz = hz || 440;
+  g.amp = amp || 0.8;
+  // 3 = cycle each for fade in + hold + fade out
+  g.dur = sr * (dur || 3  / g.hz);
+  g.win = amp_window(g.amp, g.dur);
+  g.pos = 0;
+  g.phase = 0;
+  g.incr = (g.hz / sr) * 2 * Math.PI;
+
+  function next_value() {
+    value = g.win() * Math.sin(g.phase);
+    g.phase = (g.phase + g.incr) % (2 * Math.PI);
+    g.pos = g.pos + 1;
+    pan_a = pan_amps(pan);
+    return [value * pan_a[0], value * pan_a[1]];
+  }
+
+  g.next_value = next_value;
+  return g
+}
