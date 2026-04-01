@@ -1,8 +1,8 @@
 function linear(a,b, x,y) {
   // linear translation of numbers in range a ... b to range x ... y
-  pad = x
-  trim = a
-  scale = (y - x) / (b - a)
+  const pad = x
+  const trim = a
+  const scale = (y - x) / (b - a)
   function linear_projection(n) {
     return pad + (scale * (n - trim))
   }
@@ -24,8 +24,8 @@ function amp_window(amp, dur) {
   return window_f;
 }
 
-pan_lin = linear(-1,1, (Math.PI * 2 * 0.25),(Math.PI * 2 * 0.75));
-pan_amp_lin = linear(-1,1, 0,1);
+const pan_lin = linear(-1,1, (Math.PI * 2 * 0.25),(Math.PI * 2 * 0.75));
+const pan_amp_lin = linear(-1,1, 0,1);
 
 function pan_amps(n) {
   // for input -1, r will be at nadir, l will be at peak
@@ -62,3 +62,5 @@ function new_granule(sr, t, hz, amp, dur, pan) {
   g.next_value = next_value;
   return g
 }
+
+export default { linear }
