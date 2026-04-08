@@ -12,12 +12,12 @@ function linear(a,b, x,y) {
 function amp_window(amp, dur) {
   // creates a windowing function in the shape of a sinusoid
   // start at nadir of sin's range
-  phase = Math.PI * 1.5;
-  increment = 2 * (Math.PI / dur);
+  var phase = Math.PI * 1.5;
+  const increment = 2 * (Math.PI / dur);
   // translate from range of sin to 0 ... amp
-  lin = linear(-1,1, 0,amp)
+  const lin = linear(-1,1, 0,amp)
   function window_f() {
-    scalar = Math.sin(phase);
+    const scalar = Math.sin(phase);
     phase = phase + increment;
     return lin(scalar);
   }
@@ -63,4 +63,4 @@ function new_granule(sr, t, hz, amp, dur, pan) {
   return g
 }
 
-export default { linear }
+export default { linear, amp_window }
