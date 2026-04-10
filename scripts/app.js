@@ -25,16 +25,12 @@ function fill_buffer(granulator) {
   for (let i = 0; i < buff_l.length; i++) {
     keep = [];
     granulator.granules.forEach((g) =>
-      // is this one active yet?
-      if (g.t <= granulator.index) {
-       continue;
-      }
-      l_r = g.next_value();
+      v = g.next_value();
       // distribute data r/l
-      buff_l[i] += l_r[0];
-      buff_r[i] += l_r[1];
+      buff_l[i] += v.l;
+      buff_r[i] += v.r;
       // do we need to keep this one for future iterations?
-      if (granulator.index < (g.t + g.dur)) {
+      if (!v.done) {
         keep.append(g)
       }
     )
@@ -51,6 +47,7 @@ function play_buffer(granulator) {
   source.buffer = granulator.buffer;
   source.connect(ctx.destination)
   source.start();
+  // TODO is this the right way to loop?
   source.onended = () => {
     play_buffer();
   }
