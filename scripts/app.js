@@ -15,8 +15,7 @@ function create_granule(ctx) {
   return granulator;
 }
 
-// consider splitting audio api access to a shim, and moving all
-// the logic into a testable pure function
+// TODO: lift most of this logic into a pure function
 function fill_buffer(granulator) {
   // This gives us the actual array that contains the data
   const buff_l = granulator.buffer.getChannelData(0);
@@ -24,21 +23,21 @@ function fill_buffer(granulator) {
 
   for (let i = 0; i < buff_l.length; i++) {
     keep = [];
-    granulator.granules.forEach((g) =>
+    granulator.granules.forEach((g) => {
       v = g.next_value();
       // distribute data r/l
       buff_l[i] += v.l;
       buff_r[i] += v.r;
       // do we need to keep this one for future iterations?
       if (!v.done) {
-        keep.append(g)
+        keep.append(g);
       }
-    )
-    granulator.granules = keep
-    granulator.index = granulator.index + 1
+    granulator.granules = keep;
+    granulator.index = granulator.index + 1;
+    })
   }
 
-  return keep
+  return keep;
 }
 
 function play_buffer(granulator) {
@@ -51,4 +50,12 @@ function play_buffer(granulator) {
   source.onended = () => {
     play_buffer();
   }
+}
+
+function init() {
+  console.log("app startup");
+}
+
+export default {
+  init
 }
