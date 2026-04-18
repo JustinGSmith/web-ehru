@@ -41,7 +41,8 @@ function pan_amps(n) {
 }
 
 // TODO - break this down into smaller parts
-function new_granule(sr, t, hz, amp, dur, pan) {
+function new_granule(params) {
+  let {sr, t, hz, amp, dur, pan} = params;
   var g = {};
   // the .t property is the delay in samples before the grain starts
   g.t = t || 0;

@@ -55,6 +55,6 @@ const { new_granule } = pure;
 
 describe ('new_granule', () => {
   it('creates a well behaved granule', () => {
-    const g = new_granule(4400, 0, 440, 0, 10, 0);
+    const g = new_granule({sr: 44100, t: 0, hz: 440, amp: 0, dur: 10, pan: 0});
   })
 })
