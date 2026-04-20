@@ -74,7 +74,7 @@ function new_granule(params) {
     g.phase = (g.phase + g.incr) % tau;
     const amps = pan_amps(pan);
     return {
-      l: value * ampls.l,
+      l: value * amps.l,
       r: value * amps.r
     };
   }
@@ -83,7 +83,7 @@ function new_granule(params) {
   return g
 }
 
-export default {
+export {
   linear,
   amp_window,
   pan_amps,

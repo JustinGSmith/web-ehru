@@ -39,7 +39,7 @@ function init() {
     return;
   }
 
-  appContents.style.display = "block";
+  window.appContents.style.display = "block";
   document.body.removeChild(startMessage);
 
   // create web audio api context
