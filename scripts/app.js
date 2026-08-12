@@ -38,9 +38,6 @@ function fill_buffer(granulator) {
         keep.push(g);
       }
     })
-//    if (i % 100000 == 0) {
-//      console.log("kept", keep.length, "index", granulator.index);
-//    }
     granulator.granules = keep;
     granulator.index = granulator.index + 1;
   }

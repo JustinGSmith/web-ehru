@@ -40,8 +40,7 @@ function pan_amps(n) {
   };
 }
 
-// TODO - break this down into smaller parts
-function new_granule(params) {
+function init_granule(params) {
   let {sr, t, hz, amp, dur, pan} = params;
   var g = {};
   // the .t property is the delay in samples before the grain starts
@@ -56,24 +55,37 @@ function new_granule(params) {
   g.phase = 0;
   g.incr = (g.hz / sr) * tau
   g.pan = pan || 0.0;
+  return g;
+}
+
+function new_granule(params) {
+  var g = init_granule(params);
+
+  const prefix_zero = {
+    l: 0.0,
+    r: 0.0,
+    done: false
+  };
+
+  const postfix_zero = {
+    l: 0.0,
+    r: 0.0,
+    done: true
+  };
 
   function next_value() {
+    // if we finished already, emit zeroes
     if (g.dur <= 0) {
-      return {
-        l: 0.0,
-        r: 0.0,
-        done: true
-      };
+      return postfix_zero;
     }
+    // if we haven't started yet, emit zeroes
     if (g.t > 0) {
       g.t--;
-      return {
-        l: 0.0,
-        r: 0.0,
-        done: false
-      };
+      return prefix_zero;
     }
+
     g.dur--;
+
     const value = g.win() * Math.sin(g.phase);
     g.phase = (g.phase + g.incr) % tau;
     const amps = pan_amps(g.pan);
@@ -84,8 +96,17 @@ function new_granule(params) {
     };
   }
 
+  function fill(count) {
+    var arr = Array(count);
+    for (let i = 0; i < count; i++) {
+      arr[i] = g.next_value();
+    }
+    return arr;
+  }
+
   g.next_value = next_value;
-  return g
+  g.fill = fill;
+  return g;
 }
 
 export {
