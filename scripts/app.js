@@ -25,6 +25,8 @@ function fill_buffer(granulator) {
   const buff_r = granulator.buffer.getChannelData(1);
 
   for (let i = 0; i < buff_l.length; i++) {
+    buff_l[i] = 0;
+    buff_r[i] = 0;
     var keep = [];
     granulator.granules.forEach((g) => {
       const v = g.next_value();
@@ -32,10 +34,13 @@ function fill_buffer(granulator) {
       buff_l[i] += v.l;
       buff_r[i] += v.r;
       // do we need to keep this one for future iterations?
-      if (!v.done) {
+      if (v.done != true) {
         keep.push(g);
       }
     })
+//    if (i % 100000 == 0) {
+//      console.log("kept", keep.length, "index", granulator.index);
+//    }
     granulator.granules = keep;
     granulator.index = granulator.index + 1;
   }
@@ -43,19 +48,17 @@ function fill_buffer(granulator) {
   return keep;
 }
 
-function init_buffer(granulator) {
-}
-
 function play_buffer(granulator) {
   var source = granulator.ctx.createBufferSource();
   source.buffer = granulator.buffer;
   source.connect(granulator.ctx.destination);
   fill_buffer(granulator);
-  source.start();
   // TODO is this the right way to loop?
   source.onended = () => {
+    // console.log("re-init");
     play_buffer(granulator);
   }
+  source.start();
 }
 
 function init() {
@@ -76,11 +79,10 @@ function init() {
     t: 0,
     hz: 1000.0,
     amp: 0.8,
-    dur: 200.0,
+    dur: 20.0,
     pan: 0.0
   }));
 
-  init_buffer(gran);
   play_buffer(gran);
 
   window.isAppInit = true;

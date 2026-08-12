@@ -45,37 +45,42 @@ function new_granule(params) {
   let {sr, t, hz, amp, dur, pan} = params;
   var g = {};
   // the .t property is the delay in samples before the grain starts
-  g.t = t || 0;
+  g.t = (t * sr) || 0;
   g.hz = hz || 440;
   g.amp = amp || 0.8;
   // 3 = cycle each for fade in + hold + fade out
-  g.dur = sr * (dur || 3  / g.hz);
+  const duration_seconds = dur || 3 / g.hz;
+  // duration in samples
+  g.dur = sr * duration_seconds;
   g.win = amp_window(g.amp, g.dur);
   g.phase = 0;
-  g.incr = (g.hz / sr) * tau;
+  g.incr = (g.hz / sr) * tau
+  g.pan = pan || 0.0;
 
   function next_value() {
     if (g.dur <= 0) {
       return {
-	l: 0.0,
-	r: 0.0,
-	done: true
+        l: 0.0,
+        r: 0.0,
+        done: true
       };
     }
     if (g.t > 0) {
       g.t--;
       return {
-	l: 0.0,
-	r: 0.0
+        l: 0.0,
+        r: 0.0,
+        done: false
       };
     }
     g.dur--;
     const value = g.win() * Math.sin(g.phase);
     g.phase = (g.phase + g.incr) % tau;
-    const amps = pan_amps(pan);
+    const amps = pan_amps(g.pan);
     return {
       l: value * amps.l,
-      r: value * amps.r
+      r: value * amps.r,
+      done: false
     };
   }
 

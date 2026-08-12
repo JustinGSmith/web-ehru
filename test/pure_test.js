@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import pure from '../scripts/pure.js';
-
-const { linear } = pure;
+import { linear, amp_window, pan_amps, new_granule } from '../scripts/pure.js';
 
 describe('linear', () => {
   it('should translate ranges', () => {
@@ -12,8 +10,6 @@ describe('linear', () => {
     assert.equal(lin(0.5), 50);
   })
 })
-
-const { amp_window } = pure;
 
 describe('amp_window', () => {
   it('creates a usable windowing function', () => {
@@ -35,8 +31,6 @@ describe('amp_window', () => {
   })
 })
 
-const { pan_amps } = pure;
-
 describe('pan_amps', () => {
   it('creates a usable pan amplitude pair', () => {
     assert.equal(pan_amps(-1).l, 1);
@@ -51,10 +45,24 @@ describe('pan_amps', () => {
   })
 })
 
-const { new_granule } = pure;
-
 describe ('new_granule', () => {
   it('creates a well behaved granule', () => {
-    const g = new_granule({sr: 44100, t: 0, hz: 440, amp: 0, dur: 10, pan: 0});
+    const granule_params = {
+      sr: 44100,
+      t: 0,
+      hz: 440,
+      amp: 0,
+      dur: 10,
+      pan: 0
+    }
+    const g = new_granule(granule_params);
+    for (let i = 0; i < 10 * granule_params.sr; i++) {
+      const frame = g.next_value();
+      // console.log(frame);
+      assert.equal(frame.done, false);
+    }
+    const frame_after_end = g.next_value();
+    // console.log(frame_after_end);
+    assert.equal(frame_after_end.done, true);
   })
 })
