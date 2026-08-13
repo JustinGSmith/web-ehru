@@ -58,6 +58,24 @@ function play_buffer(granulator) {
   source.start();
 }
 
+function rnd(low, high) {
+  return low + ((high - low) * Math.random())
+}
+
+function demo_fill(gran) {
+  const density = 100 // 10000;
+  for(let i = 0; i < density; i++) {
+    gran.granules.push(new_granule({
+      sr: gran.ctx.sampleRate,
+      t: rnd(0, 115.0),
+      hz: rnd(100, 1000.0),
+      amp: rnd(0.3 / density, 0.8 / density),
+      dur: rnd(0.3, 20.0),
+      pan: rnd(-1, 1)
+    }));
+  }
+}
+
 function init() {
   if (window.isAppInit) {
     return;
@@ -71,14 +89,7 @@ function init() {
   const audioCtx = new AudioContext();
 
   var gran = create_granulator(audioCtx);
-  gran.granules.push(new_granule({
-    sr: audioCtx.sampleRate,
-    t: 0,
-    hz: 1000.0,
-    amp: 0.8,
-    dur: 20.0,
-    pan: 0.0
-  }));
+  demo_fill(gran);
 
   play_buffer(gran);
 
