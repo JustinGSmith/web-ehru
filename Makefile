@@ -1,3 +1,4 @@
+# to run the app, run `make server` in one terminal, and `make run` in another
 test: test_pure
 
 test_pure:
