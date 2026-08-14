@@ -44,6 +44,7 @@ function init_granule(params) {
   let {sr, t, hz, amp, dur, pan} = params;
   var g = {};
   // the .t property is the delay in samples before the grain starts
+  g.sr = sr;
   g.t = (t * sr) || 0;
   g.hz = hz || 440;
   g.amp = amp || 0.8;
