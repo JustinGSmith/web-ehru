@@ -110,9 +110,55 @@ function new_granule(params) {
   return g;
 }
 
+function init_fm(params) {
+  var fm = {};
+  let {hz_low, hz_high, modulation_frequency, amp, dur, pan} = params;
+  fm.amp = amp || 0.8;
+  fm.dur = dur || 1;
+  fm.pan = pan || 0;
+  fm.modulation_frequency = modulation_frequency;
+  // range of sine is -1 to +1, so our absolute magnitude should be half our
+  const center = hz_high - hz_low;
+  // desired range
+  fm.depth = center / 2;
+  // range of sine is centered on zero, so we add an offset ensuring our
+  // lowest frequency value is hz_low
+  fm.carrier = hz_low + center;
+  fm.win = amp_window(fm.amp, fm.dur)
+  return fm;
+}
+
+function new_fm(params) {
+  var fm = init_fm(params);
+
+  const mod_params = {
+    "frequency": fm.modulation_frequency,
+    "type": "sine"
+  };
+  const modulator = OscillatorNode(mod_params);
+  fm.modulator = modulator;
+
+  const depth = GainNode({"gain": params.depth});
+
+  const carrier_params = {
+    "frequency": fm.carrier,
+    "detune": fm.modulator
+    "type": "sine
+  }
+  const signal = OscillatorNode(carrier_params);
+  fm.signal = signal;
+
+  const amp = GainNode({"gain": params.amp});
+
+  fm.modulator.connect(depth).connect(signal).connect(amp);
+
+  return fm;
+}
+
 export {
   linear,
   amp_window,
   pan_amps,
-  new_granule
+  new_granule,
+  new_fm
 }
