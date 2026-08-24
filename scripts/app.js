@@ -1,4 +1,4 @@
-import { new_granule  } from './pure.js';
+import { new_granule, init_fm  } from './pure.js';
 
 function create_granulator(ctx) {
 
@@ -37,10 +37,6 @@ function play_granule(granulator, granule) {
   source.start();
 }
 
-function rnd(low, high) {
-  return low + ((high - low) * Math.random())
-}
-
 function granule_source(params) {
   var granule = new_granule(params);
   granule.buffer = new AudioBuffer({
@@ -49,6 +45,63 @@ function granule_source(params) {
     sampleRate: granule.sr
   });
   return granule;
+}
+
+function new_fm(ctx, params) {
+  var fm = init_fm(params);
+
+  const mod_params = {
+    "frequency": fm.modulation_frequency,
+    "type": "sine"
+  };
+  // TODO - this doesn't seem to modulate anything?
+  const modulator = new OscillatorNode(ctx, mod_params);
+  fm.modulator = modulator;
+
+  const depth = new GainNode(ctx, {"gain": fm.depth * 100});
+
+  modulator.connect(depth)
+
+  const carrier_params = {
+    "frequency": fm.carrier,
+    "type": "sine"
+  }
+  const signal = new OscillatorNode(ctx, carrier_params);
+  fm.signal = signal;
+  depth.connect(signal.frequency);
+
+  const amp = new GainNode(ctx, {"gain": fm.amp});
+  fm.output = amp;
+
+  signal.connect(amp).connect(ctx.destination);
+  modulator.start();
+
+  return fm;
+}
+
+function create_fm_orchestra(ctx) {
+
+  console.log("creating fm orchestra v0");
+  var orchestra = {};
+
+  function play(label, fm) {
+    orchestra[label] = fm;
+    fm.signal.start();
+  }
+
+  orchestra.play = play;
+
+  function stop(label, fm) {
+    delete(orchestra[label]);
+  }
+
+  orchestra.stop = stop;
+
+  return orchestra;
+}
+
+function rnd(low, high) {
+  return low + ((high - low) * Math.random())
 }
 
 function demo_fill(gran) {
@@ -66,6 +119,36 @@ function demo_fill(gran) {
   }
 }
 
+function gran_demo(audioCtx) {
+  var gran = create_granulator(audioCtx);
+  demo_fill(gran);
+
+  gran.granules.forEach( (granule) => {
+    setTimeout(
+      () => {
+        play_granule(gran, granule);
+      },
+      gran.t
+    );
+  });
+}
+
+function fm_demo(audioCtx) {
+  var orc = create_fm_orchestra(audioCtx);
+
+  orc.play(
+    'melody',
+    new_fm(
+    audioCtx, {
+    'hz_low': 100,
+    'hz_high': 10000,
+    'modulation_hz': 666,
+    'amp': 0.4,
+    'dur': 200,
+    'pan': 0
+  }));
+}
+
 function init() {
   if (window.isAppInit) {
     return;
@@ -78,17 +161,8 @@ function init() {
   const audioContext = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioContext();
 
-  var gran = create_granulator(audioCtx);
-  demo_fill(gran);
-
-  gran.granules.forEach( (granule) => {
-    setTimeout(
-      () => {
-        play_granule(gran, granule);
-      },
-      gran.t
-    );
-  });
+  // gran_demo(audioCtx);
+  fm_demo(audioCtx);
 
   window.isAppInit = true;
 }

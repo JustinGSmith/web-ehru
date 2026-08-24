@@ -128,37 +128,11 @@ function init_fm(params) {
   return fm;
 }
 
-function new_fm(params) {
-  var fm = init_fm(params);
-
-  const mod_params = {
-    "frequency": fm.modulation_frequency,
-    "type": "sine"
-  };
-  const modulator = OscillatorNode(mod_params);
-  fm.modulator = modulator;
-
-  const depth = GainNode({"gain": params.depth});
-
-  const carrier_params = {
-    "frequency": fm.carrier,
-    "detune": fm.modulator
-    "type": "sine
-  }
-  const signal = OscillatorNode(carrier_params);
-  fm.signal = signal;
-
-  const amp = GainNode({"gain": params.amp});
-
-  fm.modulator.connect(depth).connect(signal).connect(amp);
-
-  return fm;
-}
 
 export {
   linear,
   amp_window,
   pan_amps,
   new_granule,
-  new_fm
+  init_fm
 }
