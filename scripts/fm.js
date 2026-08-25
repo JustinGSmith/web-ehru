@@ -68,27 +68,62 @@ function create_fm_orchestra(ctx) {
 
 function fm_demo(audioCtx) {
   var orc = create_fm_orchestra(audioCtx);
+  return orc;
+}
 
-  orc.play(
-    'melody',
-    new_fm(
-      audioCtx,
-      {
+function toggle_instrument(code, params) {
+  // creates a function that starts or stops an instrument in an orchestra
+  return (evt, press, ctx, orc) => {
+    if (press) {
+      orc.play(code, new_fm(ctx, params));
+    } else {
+      orc.stop(code);
+    }
+  }
+}
+
+const key_callbacks = {
+  "a": toggle_instrument(
+    "a",
+    {
         'hz_low': 100,
         'hz_high': 10000,
         'modulation_hz': 6,
         'amp': 0.4,
         'dur': 200,
-        'pan': 0
-      }));
-
-  return orc;
-}
-
-const key_callbacks = {
-  "a": (evt, press, ctx, orc) => {
-    console.log("a", press);
-  }
+        'pan': -1
+    }),
+  "s": toggle_instrument(
+    "s",
+    {
+      'hz_low': 220,
+      'hz_high': 300,
+      'modulation_hz': 21,
+      'amp': 0.6,
+      'dur': 200,
+      'pan': 1
+    }),
+  "d": toggle_instrument(
+    "d",
+    {
+      'hz_low': 413,
+      'hz_high': 511,
+      'modulation_hz': 111.111,
+      'amp': 0.5,
+      'dur': 200,
+      'pan': 0
+    }),
+  "f": toggle_instrument(
+    "f",
+    {
+      'hz_low': 20,
+      'hz_high': 696.33,
+      'modulation_hz': 300.111,
+      'amp': 0.6,
+      'dur': 200,
+      'pan': 0
+    }
+  )
 }
 
 function key_callback(evt, ctx, orc) {
