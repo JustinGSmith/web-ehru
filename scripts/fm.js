@@ -82,49 +82,50 @@ function toggle_instrument(code, params) {
   }
 }
 
-const key_callbacks = {
-  "a": toggle_instrument(
-    "a",
-    {
-        'hz_low': 100,
-        'hz_high': 10000,
-        'modulation_hz': 6,
-        'amp': 0.4,
-        'dur': 200,
-        'pan': -1
-    }),
-  "s": toggle_instrument(
-    "s",
-    {
-      'hz_low': 220,
-      'hz_high': 300,
-      'modulation_hz': 21,
-      'amp': 0.6,
-      'dur': 200,
-      'pan': 1
-    }),
-  "d": toggle_instrument(
-    "d",
-    {
-      'hz_low': 413,
-      'hz_high': 511,
-      'modulation_hz': 111.111,
-      'amp': 0.5,
-      'dur': 200,
-      'pan': 0
-    }),
-  "f": toggle_instrument(
-    "f",
-    {
-      'hz_low': 20,
-      'hz_high': 696.33,
-      'modulation_hz': 300.111,
-      'amp': 0.6,
-      'dur': 200,
-      'pan': 0
-    }
-  )
-}
+const key_data = [
+  {
+    'key': "a",
+    'hz_low': 100,
+    'hz_high': 10000,
+    'modulation_hz': 6,
+    'amp': 0.4,
+    'dur': 200,
+    'pan': -1
+  },
+  {
+    'key': "s",
+    'hz_low': 220,
+    'hz_high': 300,
+    'modulation_hz': 21,
+    'amp': 0.6,
+    'dur': 200,
+    'pan': 1
+  },
+  {
+    'key': "d",
+    'hz_low': 413,
+    'hz_high': 511,
+    'modulation_hz': 111.111,
+    'amp': 0.5,
+    'dur': 200,
+    'pan': 0
+  },
+  {
+    'key': "f",
+    'hz_low': 20,
+    'hz_high': 696.33,
+    'modulation_hz': 300.111,
+    'amp': 0.6,
+    'dur': 200,
+    'pan': 0
+  }
+];
+
+var key_callbacks = {}
+
+key_data.forEach((k) => {
+  key_callbacks[k.key] = toggle_instrument(k.key, k);
+});
 
 function key_callback(evt, ctx, orc) {
 
