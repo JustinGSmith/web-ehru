@@ -1,4 +1,4 @@
-import { fm_demo  } from './fm.js';
+import { fm_demo, key_callback  } from './fm.js';
 
 function init() {
   if (window.isAppInit) {
@@ -13,7 +13,20 @@ function init() {
   const audioCtx = new AudioContext();
 
   // gran.gran_demo(audioCtx);
-  fm_demo(audioCtx);
+  const orchestra = fm_demo(audioCtx);
+
+  window.addEventListener(
+    "keydown",
+    (event) => {
+      key_callback(event, audioCtx, orchestra);
+    }
+  );
+  window.addEventListener(
+    "keyup",
+    (event) => {
+      key_callback(event, audioCtx, orchestra);
+    }
+  );
 
   window.isAppInit = true;
 }

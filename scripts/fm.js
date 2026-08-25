@@ -3,29 +3,39 @@ import { init_fm  } from './pure.js';
 function new_fm(ctx, params) {
   var fm = init_fm(params);
 
-  const mod_params = {
-    "frequency": fm.modulation_frequency,
-    "type": "sine"
-  };
-  const modulator = new OscillatorNode(ctx, mod_params);
-  fm.modulator = modulator;
-
-  const depth = new GainNode(ctx, {"gain": fm.depth * 100});
+  const modulator = new OscillatorNode(
+    ctx,
+    {
+      "frequency": fm.modulation_frequency,
+      "type": "sine"
+    });
+  const depth = new GainNode(
+    ctx,
+    {
+      "gain": fm.depth
+    });
+  const signal = new OscillatorNode(
+    ctx,
+    {
+      "frequency": fm.carrier,
+      "type": "sine"
+    });
+  const amp = new GainNode(
+    ctx,
+    {
+      "gain": fm.amp
+    });
 
   modulator.connect(depth)
-
-  const carrier_params = {
-    "frequency": fm.carrier,
-    "type": "sine"
-  }
-  const signal = new OscillatorNode(ctx, carrier_params);
-  fm.signal = signal;
   depth.connect(signal.frequency);
+  signal.connect(amp)
+  amp.connect(ctx.destination);
 
-  const amp = new GainNode(ctx, {"gain": fm.amp});
+  fm.modulator = modulator;
+  fm.depth = depth;
+  fm.signal = signal;
   fm.output = amp;
 
-  signal.connect(amp).connect(ctx.destination);
   modulator.start();
 
   return fm;
@@ -66,13 +76,42 @@ function fm_demo(audioCtx) {
       {
         'hz_low': 100,
         'hz_high': 10000,
-        'modulation_hz': 666,
+        'modulation_hz': 6,
         'amp': 0.4,
         'dur': 200,
         'pan': 0
       }));
+
+  return orc;
+}
+
+const key_callbacks = {
+  "a": (evt, press, ctx, orc) => {
+    console.log("a", press);
+  }
+}
+
+function key_callback(evt, ctx, orc) {
+
+  if (evt["repeat"]) {
+    console.log("key repeat ignored", evt.key);
+    return;
+  }
+
+  const f = key_callbacks[evt.key]
+
+  if (!f) {
+    console.log("no binding for", evt.key, evt);
+    return;
+  }
+
+  const press = evt.type == "keydown";
+
+  f(evt, press, ctx, orc);
+  return;
 }
 
 export {
-  fm_demo
+  fm_demo,
+  key_callback
 }
