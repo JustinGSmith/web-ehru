@@ -5,12 +5,9 @@ function init() {
     return;
   }
 
-  window.appContents.style.display = "block";
-  document.body.removeChild(startMessage);
-
   // create web audio api context
   const audioContext = window.AudioContext || window.webkitAudioContext;
-  const audioCtx = new AudioContext();
+  const audioCtx = new audioContext();
 
   // gran.gran_demo(audioCtx);
   const orchestra = fm_demo(audioCtx);

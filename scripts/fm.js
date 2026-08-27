@@ -28,7 +28,7 @@ function new_fm(ctx, params) {
 
   modulator.connect(depth)
   depth.connect(signal.frequency);
-  signal.connect(amp)
+  signal.connect(amp);
   amp.connect(ctx.destination);
 
   fm.modulator = modulator;
@@ -39,36 +39,6 @@ function new_fm(ctx, params) {
   modulator.start();
 
   return fm;
-}
-
-function create_fm_orchestra(ctx) {
-
-  console.log("creating fm orchestra v0");
-  var orchestra = {};
-
-  function play(label, instance) {
-    orchestra[label] = instance;
-    instance.signal.start();
-  }
-  orchestra.play = play;
-
-  function pause(label) {
-    orchestra[label].signal.stop();
-  }
-  orchestra.pause = pause;
-
-  function stop(label, instance) {
-    pause(label);
-    delete(orchestra[label]);
-  }
-  orchestra.stop = stop;
-
-  return orchestra;
-}
-
-function fm_demo(audioCtx) {
-  var orc = create_fm_orchestra(audioCtx);
-  return orc;
 }
 
 function toggle_instrument(code, params) {
@@ -132,10 +102,6 @@ const key_data = [
 
 var key_callbacks = {}
 
-key_data.forEach((k) => {
-  key_callbacks[k.key] = toggle_instrument(k.key, k);
-});
-
 function key_callback(evt, ctx, orc) {
 
   if (evt["repeat"]) {
@@ -154,6 +120,40 @@ function key_callback(evt, ctx, orc) {
 
   f(evt, press, ctx, orc);
   return;
+}
+
+function create_fm_orchestra(ctx) {
+
+  console.log("creating fm orchestra v0");
+  var orchestra = {};
+
+  function play(label, instance) {
+    orchestra[label] = instance;
+    instance.signal.start();
+  }
+  orchestra.play = play;
+
+  function pause(label) {
+    orchestra[label].signal.stop();
+  }
+  orchestra.pause = pause;
+
+  function stop(label, instance) {
+    pause(label);
+    delete(orchestra[label]);
+  }
+  orchestra.stop = stop;
+
+  return orchestra;
+}
+
+function fm_demo(audioCtx) {
+  key_data.forEach((k) => {
+    key_callbacks[k.key] = toggle_instrument(k.key, k);
+  });
+
+  var orc = create_fm_orchestra(audioCtx);
+  return orc;
 }
 
 export {
