@@ -1,16 +1,25 @@
 define(`note_spec',
         <div style="border: 2px solid black;">
           <div>
-          <label for="$1">note 1</label>
+          <label for="$1">$1</label>
           </div>
-          <label for="note1_hz">note1 hz</label>
+          <label for="$1_hz">$1 hz</label>
           <input
-              name="note1_hz"
-              id="note1_hz"
+              name="$1_hz"
+              id="$1_hz"
               type="range"
               min="20"
               max="10000"
               value="1000" />
+          <label for="$1_amp">$1 amp</label>
+          <input
+              name="$1_amp"
+              id="$1_amp"
+              type="range"
+              min="0.0"
+              max="1.0"
+              step="0.01"
+              value="0.5" />
         </div>)dnl
 dnl
 <!DOCTYPE html>
@@ -31,6 +40,7 @@ dnl
       <button class="mute" data-muted="false">Mute</button>
       <div class="app">
         note_spec(note1)
+        note_spec(note2)
       </div>
     </div>
 
