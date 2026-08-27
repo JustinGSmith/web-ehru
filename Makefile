@@ -16,3 +16,6 @@ run: index.html
 
 index.html: index.html.in
 	m4 index.html.in > index.html
+
+clean:
+	rm -f index.html

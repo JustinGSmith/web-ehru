@@ -54,6 +54,7 @@ function toggle_instrument(code, params) {
 
 const key_data = [
   {
+    'element_id': "note1",
     'key': "a",
     'hz_low': 100,
     'hz_high': 10000,
@@ -63,6 +64,7 @@ const key_data = [
     'pan': -1
   },
   {
+    'element_id': "note2",
     'key': "s",
     'hz_low': 220,
     'hz_high': 300,
@@ -72,6 +74,7 @@ const key_data = [
     'pan': 1
   },
   {
+    'element_id': "note3",
     'key': "d",
     'hz_low': 413,
     'hz_high': 511,
@@ -81,6 +84,7 @@ const key_data = [
     'pan': 0
   },
   {
+    'element_id': "note4",
     'key': "f",
     'hz_low': 20,
     'hz_high': 696.33,
@@ -90,6 +94,7 @@ const key_data = [
     'pan': 0
   },
   {
+    'element_id': "note5",
     'key': "w",
     'hz_low': 1000,
     'hz_high': 1200,
@@ -149,6 +154,10 @@ function create_fm_orchestra(ctx) {
 
 function fm_demo(audioCtx) {
   key_data.forEach((k) => {
+    // hook up sliders etc.
+    const element = document.getElementById(k.element_id);
+    console.log(element)
+    // hook up keypress
     key_callbacks[k.key] = toggle_instrument(k.key, k);
   });
 

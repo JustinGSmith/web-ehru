@@ -1,5 +1,7 @@
 define(`note_spec',
-        <div style="border: 2px solid black;">
+        <div
+          id="$1"
+          style="border: 2px solid black;" >
           <div>
           <label for="$1">$1</label>
           </div>
@@ -10,6 +12,7 @@ define(`note_spec',
               type="range"
               min="20"
               max="10000"
+              step="0.01"
               value="1000" />
           <label for="$1_amp">$1 amp</label>
           <input
@@ -38,9 +41,13 @@ dnl
 
       <div>
       <button class="mute" data-muted="false">Mute</button>
-      <div class="app">
+      </div>
+      <div class="notes">
         note_spec(note1)
         note_spec(note2)
+        note_spec(note3)
+        note_spec(note4)
+        note_spec(note5)
       </div>
     </div>
 
