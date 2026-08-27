@@ -149,19 +149,29 @@ function create_fm_orchestra(ctx) {
   }
   orchestra.stop = stop;
 
+  function set_note_hz(label, v) {
+    console.log("set_note_hz", label, v);
+  }
+  orchestra.set_note_hz = set_note_hz;
+
   return orchestra;
 }
 
 function fm_demo(audioCtx) {
+  console.log("creating orchestra");
+  var orc = create_fm_orchestra(audioCtx);
+
   key_data.forEach((k) => {
     // hook up sliders etc.
-    const element = document.getElementById(k.element_id);
-    console.log(element)
+    // const element = document.getElementById(k.element_id);
+    // const hz_slider = document.getElementById(k.element_id + "_hz");
+   // hz_slider.onChange = (evt) => {
+   //   orc.set_note_hz(k.key, parseFloat(evt.value));
+   // }
     // hook up keypress
     key_callbacks[k.key] = toggle_instrument(k.key, k);
   });
 
-  var orc = create_fm_orchestra(audioCtx);
   return orc;
 }
 
