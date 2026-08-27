@@ -11,5 +11,8 @@ server:
 	python3 -m http.server 8000
 
 # on a osx you can symlink or alias open to xdg-open
-run:
+run: index.html
 	xdg-open http://localhost:8000/index.html
+
+index.html: index.html.in
+	m4 index.html.in > index.html
