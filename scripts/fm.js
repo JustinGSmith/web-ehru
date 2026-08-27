@@ -118,6 +118,15 @@ const key_data = [
     'amp': 0.6,
     'dur': 200,
     'pan': 0
+  },
+  {
+    'key': "w",
+    'hz_low': 1000,
+    'hz_high': 1200,
+    'modulation_hz': 202,
+    'amp': 0.3,
+    'dur': 200,
+    'pan': 0
   }
 ];
 
