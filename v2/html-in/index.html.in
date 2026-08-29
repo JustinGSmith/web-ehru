@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>orchestra</title>
+  </head>
+  <body>
+    <div>
+      <button id="run">Run</button>
+    </div>
+    <div class="orchestra">
+      instrument_ui(note1, a)
+      instrument_ui(note2, s)
+      instrument_ui(note3, d)
+      instrument_ui(note4, f)
+      instrument_ui(note5, w)
+    </div>
+
+    <script type="module", src="scripts/fm.js"></script>
+    <script type="module", src="scripts/keys.js"></script>
+    <script type="module", src="scripts/gui.js"></script>
+    <script type="module", src="scripts/orchestra.js"></script>
+  </body>
+</html>

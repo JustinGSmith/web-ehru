@@ -1,0 +1,44 @@
+define(`instrument_ui',
+        <div
+          id="$1"
+          style="border: 2px solid black;" >
+          <div>
+          <label for="$1">$1 (press [$2] to play)</label>
+          </div>
+          <label for="$1_hz">$1 hz</label>
+          <input
+              name="$1_hz"
+              id="$1_hz"
+              type="range"
+              min="20"
+              max="1000"
+              step="0.01"
+              value="200" />
+          <label for="$1_amp">$1 amp</label>
+          <input
+              name="$1_amp"
+              id="$1_amp"
+              type="range"
+              min="0.0"
+              max="1.0"
+              step="0.01"
+              value="0.5" />
+          <label for = "$1_mod">$1 mod</label>
+          <input
+              name="$1_mod"
+              id="$1_mod"
+              type="range"
+              min="20"
+              max="10000"
+              step="0.01"
+              value="1000" />
+          <label for = "$1_depth">$1 depth</label>
+          <input
+              name="$1_depth"
+              id="$1_depth"
+              type="range"
+              min="0"
+              max="10000"
+              step="0.01"
+              value="1000" />
+        </div>)dnl
