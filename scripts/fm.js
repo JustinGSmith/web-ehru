@@ -1,8 +1,9 @@
+import ops from './ops.js'
+
 function init_fm(params) {
   const center = (params.hz_high - params.hz_low) / 2;
   return {
     'amp': params.amp || 0.8,
-    'pan': params.pan || 0,
     'modulation_frequency': params.modulation_frequency || params.hz_low,
     'depth': center,
     'carrier': params.hz_low + center,
@@ -35,7 +36,7 @@ function voice(ctx, note_data) {
       'gain': 0
     });
 
-  modulator.connect(depth)
+  modulator.connect(depth);
   depth.connect(signal.frequency);
   signal.connect(amp);
   amp.connect(ctx.destination);
@@ -57,9 +58,15 @@ function voice(ctx, note_data) {
       'amp': (x) => {
         volume = x * x; // square of 0..1 gets a decent curve
         if (amp.gain.value != 0) {
-          amp.gain.value = x;
+          amp.gain.value = volume;
         }
       }
+    },
+    'read': {
+      'mod': () => { return modulator.frequency.value; },
+      'depth': () => { return depth.gain.value; },
+      'hz': () => { return signal.detune.value; },
+      'amp': () => { return volume; }
     }
   }
 }

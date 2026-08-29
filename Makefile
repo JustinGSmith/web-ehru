@@ -8,7 +8,7 @@ run: index.html
 index.html: html-in/instrument.html.in html-in/index.html.in
 	m4 html-in/instrument.html.in html-in/index.html.in > index.html
 
-test: test_orchestra test_fm test_keys test_gui
+test: test_orchestra test_fm test_keys test_gui test_ops
 
 test_orchestra:
 	node test/orchestra_test.js
@@ -22,7 +22,10 @@ test_keys:
 test_gui:
 	node test/gui_test.js
 
-server:
+test_ops:
+	node test/ops_test.js
+
+server: index.html
 	python3 -m http.server ${PORT}
 
 clean:

@@ -12,9 +12,7 @@ const orchestra_data = [
       'hz_low': 100,
       'hz_high': 10000,
       'modulation_hz': 6,
-      'amp': 0.4,
-      'dur': 200,
-      'pan': -1
+      'amp': 0.4
     }
   },
   {
@@ -26,9 +24,7 @@ const orchestra_data = [
       'hz_low': 220,
       'hz_high': 300,
       'modulation_hz': 21,
-      'amp': 0.6,
-      'dur': 200,
-      'pan': 1
+      'amp': 0.6
     }
   },
   {
@@ -40,9 +36,7 @@ const orchestra_data = [
       'hz_low': 413,
       'hz_high': 511,
       'modulation_hz': 111.111,
-      'amp': 0.5,
-      'dur': 200,
-      'pan': 0
+      'amp': 0.5
     }
   },
   {
@@ -54,9 +48,7 @@ const orchestra_data = [
       'hz_low': 20,
       'hz_high': 696.33,
       'modulation_hz': 300.111,
-      'amp': 0.6,
-      'dur': 200,
-      'pan': 0
+      'amp': 0.6
     }
   },
   {
@@ -68,9 +60,7 @@ const orchestra_data = [
       'hz_low': 1000,
       'hz_high': 1200,
       'modulation_hz': 202,
-      'amp': 0.3,
-      'dur': 200,
-      'pan': 0
+      'amp': 0.3
     }
   }
 ];
