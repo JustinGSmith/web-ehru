@@ -1,21 +1,29 @@
 # to run the app, run `make server` in one terminal, and `make run` in another
-test: test_pure test_fm
+OPEN=xdg-open
+PORT=8080
 
-test_pure:
-	node test/pure_test.js
+run: index.html
+	${OPEN} http://localhost:${PORT}/index.html
+
+index.html: html-in/instrument.html.in html-in/index.html.in
+	m4 html-in/instrument.html.in html-in/index.html.in > index.html
+
+test: test_orchestra test_fm test_keys test_gui
+
+test_orchestra:
+	node test/orchestra_test.js
 
 test_fm:
 	node test/fm_test.js
 
+test_keys:
+	node test/keys_test.js
+
+test_gui:
+	node test/gui_test.js
+
 server:
-	python3 -m http.server 8000
-
-# on a osx you can symlink or alias open to xdg-open
-run: index.html
-	xdg-open http://localhost:8000/index.html
-
-index.html: index.html.in
-	m4 index.html.in > index.html
+	python3 -m http.server ${PORT}
 
 clean:
 	rm -f index.html

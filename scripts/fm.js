@@ -1,29 +1,38 @@
-import { init_fm  } from './pure.js';
+function init_fm(params) {
+  const center = (params.hz_high - params.hz_low) / 2;
+  return {
+    'amp': params.amp || 0.8,
+    'pan': params.pan || 0,
+    'modulation_frequency': params.modulation_frequency || params.hz_low,
+    'depth': center,
+    'carrier': params.hz_low + center,
+  };
+}
 
-function new_fm(ctx, params) {
-  var fm = init_fm(params);
+function voice(ctx, note_data) {
+  var params = init_fm(note_data);
 
   const modulator = new OscillatorNode(
     ctx,
     {
-      "frequency": fm.modulation_frequency,
-      "type": "sine"
+      'frequency': params.modulation_frequency,
+      'type': "sine"
     });
   const depth = new GainNode(
     ctx,
     {
-      "gain": fm.depth
+      'gain': params.depth
     });
   const signal = new OscillatorNode(
     ctx,
     {
-      "frequency": fm.carrier,
-      "type": "sine"
+      'frequency': params.carrier,
+      'type': "sine"
     });
   const amp = new GainNode(
     ctx,
     {
-      "gain": fm.amp
+      'gain': 0
     });
 
   modulator.connect(depth)
@@ -31,151 +40,39 @@ function new_fm(ctx, params) {
   signal.connect(amp);
   amp.connect(ctx.destination);
 
-  fm.modulator = modulator;
-  fm.depth = depth;
-  fm.signal = signal;
-  fm.output = amp;
-
   modulator.start();
+  signal.start();
 
-  return fm;
-}
+  var volume = params.amp;
 
-function toggle_instrument(code, params) {
-  // creates a function that starts or stops an instrument in an orchestra
-  return (evt, press, ctx, orc) => {
-    if (press) {
-      orc.play(code, new_fm(ctx, params));
-    } else {
-      orc.stop(code);
+  return {
+    'control': {
+      'play': () => { amp.gain.value = volume; },
+      'pause': () => { amp.gain.value = 0; }
+    },
+    'assign': {
+      'mod': (x) => { modulator.frequency.value = x },
+      'depth': (x) => { depth.gain.value = x },
+      'hz': (x) => { signal.detune.value = x },
+      'amp': (x) => {
+        volume = x * x; // square of 0..1 gets a decent curve
+        if (amp.gain.value != 0) {
+          amp.gain.value = x;
+        }
+      }
     }
   }
 }
 
-const key_data = [
-  {
-    'element_id': "note1",
-    'key': "a",
-    'hz_low': 100,
-    'hz_high': 10000,
-    'modulation_hz': 6,
-    'amp': 0.4,
-    'dur': 200,
-    'pan': -1
-  },
-  {
-    'element_id': "note2",
-    'key': "s",
-    'hz_low': 220,
-    'hz_high': 300,
-    'modulation_hz': 21,
-    'amp': 0.6,
-    'dur': 200,
-    'pan': 1
-  },
-  {
-    'element_id': "note3",
-    'key': "d",
-    'hz_low': 413,
-    'hz_high': 511,
-    'modulation_hz': 111.111,
-    'amp': 0.5,
-    'dur': 200,
-    'pan': 0
-  },
-  {
-    'element_id': "note4",
-    'key': "f",
-    'hz_low': 20,
-    'hz_high': 696.33,
-    'modulation_hz': 300.111,
-    'amp': 0.6,
-    'dur': 200,
-    'pan': 0
-  },
-  {
-    'element_id': "note5",
-    'key': "w",
-    'hz_low': 1000,
-    'hz_high': 1200,
-    'modulation_hz': 202,
-    'amp': 0.3,
-    'dur': 200,
-    'pan': 0
-  }
-];
+function init(context_class) {
+  const ctx = new context_class()
 
-var key_callbacks = {}
-
-function key_callback(evt, ctx, orc) {
-
-  if (evt["repeat"]) {
-    console.log("key repeat ignored", evt.key);
-    return;
-  }
-
-  const f = key_callbacks[evt.key]
-
-  if (!f) {
-    console.log("no binding for", evt.key, evt);
-    return;
-  }
-
-  const press = evt.type == "keydown";
-
-  f(evt, press, ctx, orc);
-  return;
+  return (params) => {
+    return voice(ctx, params);
+  };
 }
 
-function create_fm_orchestra(ctx) {
 
-  console.log("creating fm orchestra v0");
-  var orchestra = {};
-
-  function play(label, instance) {
-    orchestra[label] = instance;
-    instance.signal.start();
-  }
-  orchestra.play = play;
-
-  function pause(label) {
-    orchestra[label].signal.stop();
-  }
-  orchestra.pause = pause;
-
-  function stop(label, instance) {
-    pause(label);
-    delete(orchestra[label]);
-  }
-  orchestra.stop = stop;
-
-  function set_note_hz(label, v) {
-    console.log("set_note_hz", label, v);
-  }
-  orchestra.set_note_hz = set_note_hz;
-
-  return orchestra;
-}
-
-function fm_demo(audioCtx) {
-  console.log("creating orchestra");
-  var orc = create_fm_orchestra(audioCtx);
-
-  key_data.forEach((k) => {
-    // hook up sliders etc.
-    // const element = document.getElementById(k.element_id);
-    // const hz_slider = document.getElementById(k.element_id + "_hz");
-   // hz_slider.onChange = (evt) => {
-   //   orc.set_note_hz(k.key, parseFloat(evt.value));
-   // }
-    // hook up keypress
-    key_callbacks[k.key] = toggle_instrument(k.key, k);
-  });
-
-  return orc;
-}
-
-export {
-  fm_demo,
-  key_callback
+export default {
+  init
 }
