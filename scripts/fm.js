@@ -1,18 +1,22 @@
 import ops from './ops.js'
 
-function init_fm(params) {
-  const center = (params.hz_high - params.hz_low) / 2;
-  return {
-    'amp': params.amp || 0.8,
-    'modulation_frequency': params.modulation_frequency || params.hz_low,
-    'depth': center,
-    'carrier': params.hz_low + center,
-  };
-}
+const slider_spec = {'min': 0, 'max': 100}
 
-function voice(ctx, note_data) {
-  var params = init_fm(note_data);
+const as_amp = ops.amp_trans;
 
+const as_hz = ops.translator({
+  'i': slider_spec,
+  'o': {'min': 20, 'max': 10000},
+  'curve': 2
+});
+
+const as_mod = ops.translator({
+  'i': slider_spec,
+  'o': {'min': 0, 'max': 1000},
+  'curve': 2
+})
+
+function voice(ctx, params) {
   const modulator = new OscillatorNode(
     ctx,
     {
@@ -52,21 +56,22 @@ function voice(ctx, note_data) {
       'pause': () => { amp.gain.value = 0; }
     },
     'assign': {
-      'mod': (x) => { modulator.frequency.value = x },
-      'depth': (x) => { depth.gain.value = x },
-      'hz': (x) => { signal.detune.value = x },
+      'mod': (x) => { modulator.frequency.value = as_mod.i(x) },
+      'depth': (x) => { depth.gain.value = as_mod.i(x) },
+      'hz': (x) => { signal.detune.value = as_hz.i(x) },
       'amp': (x) => {
-        volume = x * x; // square of 0..1 gets a decent curve
+        volume = as_amp.i(x);
+        console.log("setting amp", volume);
         if (amp.gain.value != 0) {
           amp.gain.value = volume;
         }
       }
     },
     'read': {
-      'mod': () => { return modulator.frequency.value; },
-      'depth': () => { return depth.gain.value; },
-      'hz': () => { return signal.detune.value; },
-      'amp': () => { return volume; }
+      'mod': () => { return as_mod.o(modulator.frequency.value); },
+      'depth': () => { return as_mod.o(depth.gain.value); },
+      'hz': () => { return as_hz.o(signal.detune.value); },
+      'amp': () => { return as_amp.o(volume); }
     }
   }
 }
@@ -80,6 +85,10 @@ function init(context_class) {
 }
 
 
+// > {default: fm} = await import('./scripts/fm.js')
 export default {
-  init
+  init,
+  as_amp,
+  as_hz,
+  as_mod
 }

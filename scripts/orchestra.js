@@ -9,10 +9,10 @@ const orchestra_data = [
       'key': "a"
     },
     'params': {
-      'hz_low': 100,
-      'hz_high': 10000,
-      'modulation_hz': 6,
-      'amp': 0.4
+      'amp': 0.4,
+      'modulation_frequency': 47.59,
+      'depth': 26.205,
+      'carrier': 73.795
     }
   },
   {
@@ -21,10 +21,10 @@ const orchestra_data = [
       'key': "s"
     },
     'params': {
-      'hz_low': 220,
-      'hz_high': 300,
-      'modulation_hz': 21,
-      'amp': 0.6
+      'amp': 0.6,
+      'modulation_frequency': 220,
+      'depth': 40,
+      'carrier': 260
     }
   },
   {
@@ -33,10 +33,10 @@ const orchestra_data = [
       'key': "d"
     },
     'params': {
-      'hz_low': 413,
-      'hz_high': 511,
-      'modulation_hz': 111.111,
-      'amp': 0.5
+      'amp': 0.5,
+      'modulation_frequency': 413,
+      'depth': 49,
+      'carrier': 462
     }
   },
   {
@@ -45,10 +45,10 @@ const orchestra_data = [
       'key': "f"
     },
     'params': {
-      'hz_low': 20,
-      'hz_high': 696.33,
-      'modulation_hz': 300.111,
-      'amp': 0.6
+      'amp': 0.6,
+      'modulation_frequency': 20,
+      'depth': 338.165,
+      'carrier': 358.165
     }
   },
   {
@@ -57,10 +57,10 @@ const orchestra_data = [
       'key': "w"
     },
     'params': {
-      'hz_low': 1000,
-      'hz_high': 1200,
-      'modulation_hz': 202,
-      'amp': 0.3
+      'amp': 0.3,
+      'modulation_frequency': 1000,
+      'depth': 100,
+      'carrier': 1100
     }
   }
 ];
@@ -87,12 +87,19 @@ function create_orchestra () {
 
 var init = false;
 
-onload = (evt) => {
-  const run_button = document.getElementById("run");
-  run_button.onclick = () => {
-    if (!init) {
-      init = true;
-      create_orchestra();
+if (typeof onload != "undefined") {
+  onload = (evt) => {
+    const run_button = document.getElementById("run");
+    run_button.onclick = () => {
+      if (!init) {
+        init = true;
+        create_orchestra();
+      }
     }
-  }
-};
+  };
+}
+
+// > orc = await import('./scripts/orchestra.js')
+export default {
+  orchestra_data
+}

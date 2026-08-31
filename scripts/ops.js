@@ -35,7 +35,19 @@ function translator(spec) {
   }
 }
 
+const amp_trans = {
+  'i': (x) => {
+    const v = x / 100;
+    return v*v;
+  },
+  'o': (x) => {
+    const v = Math.sqrt(x);
+    return v * 100;
+  }
+}
+
 
 export default {
-  translator
+  translator,
+  amp_trans
 }
