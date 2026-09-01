@@ -1,19 +1,21 @@
 import ops from './ops.js'
 
-const slider_spec = {'min': 0, 'max': 100}
-
-const as_amp = ops.amp_trans;
+const as_amp = ops.translator({
+  'i': {'min': 0, 'max': 100},
+  'o': {'min': 0, 'max': 1},
+  'curve': {'min': -65, 'max': 0, 'exp': Math.pow(2, 1.0 / 10.0)}
+});
 
 const as_hz = ops.translator({
-  'i': slider_spec,
+  'i': {'min': 0, 'max': 100},
   'o': {'min': 20, 'max': 10000},
-  'curve': 2
+  'curve': {'min': 1, 'max': 8, 'exp': 2}
 });
 
 const as_mod = ops.translator({
-  'i': slider_spec,
+  'i': {'min': 0, 'max': 100},
   'o': {'min': 0, 'max': 1000},
-  'curve': 2
+  'curve': {'min': 1, 'max': 8, 'exp': 2}
 })
 
 function voice(ctx, params) {
@@ -31,7 +33,7 @@ function voice(ctx, params) {
   const signal = new OscillatorNode(
     ctx,
     {
-      'frequency': params.carrier,
+      'detune': params.carrier,
       'type': "sine"
     });
   const amp = new GainNode(
