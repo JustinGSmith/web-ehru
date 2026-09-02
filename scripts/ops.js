@@ -4,9 +4,9 @@ function log_n(x, n) {
 
 function translator(spec) {
   // translates between a linear range (i) and a curved one (o)
-  var i = {'min': spec.i.min, 'max': spec.i.max};
-  var c = {'min': spec.curve.min, 'max': spec.curve.max};
-  var o = {'min': spec.o.min, 'max': spec.o.max};
+  var i = {min: spec.i.min, max: spec.i.max};
+  var c = {min: spec.curve.min, max: spec.curve.max};
+  var o = {min: spec.o.min, max: spec.o.max};
   const apply_curve = (x) => {
     return Math.pow(spec.curve.exp, x);
   }
@@ -22,7 +22,7 @@ function translator(spec) {
   i.gain = c.spread_in / i.spread;
 
   return {
-    'i': (x) => {
+    i: (x) => {
       const linear_trimmed = x - i.min;
       const linear_scaled = linear_trimmed * i.gain;
       const linear_padded = linear_scaled + c.min;
@@ -35,7 +35,7 @@ function translator(spec) {
       //   curve_trimmed, curve_scaled, curve_padded});
       return curve_padded;
     },
-    'o': (x) => {
+    o: (x) => {
       const curve_unpadded = x - spec.o.min;
       const curve_unscaled = curve_unpadded / o.gain;
       const curve_untrimmed = curve_unscaled + c.min_out;
@@ -51,19 +51,6 @@ function translator(spec) {
   }
 }
 
-const amp_trans = {
-  'i': (x) => {
-    const v = x / 100;
-    return v*v;
-  },
-  'o': (x) => {
-    const v = Math.sqrt(x);
-    return v * 100;
-  }
-}
-
-
 export default {
-  translator,
-  amp_trans
+  translator
 }

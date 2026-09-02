@@ -5,63 +5,63 @@ import sensor_access from './sensors.js'
 
 const orchestra_data = [
   {
-    'ui': {
-      'element_prefix': "note1",
-      'key': "a"
+    ui: {
+      element_prefix: "note1",
+      key: "a"
     },
-    'params': {
-      'amp': 0.4,
-      'modulation_frequency': 47.59,
-      'depth': 26.205,
-      'carrier': 73.795
+    params: {
+      amp: 0.4,
+      modulation_frequency: 47.59,
+      depth: 26.205,
+      carrier: 73.795
     }
   },
   {
-    'ui': {
-      'element_prefix': "note2",
-      'key': "s"
+    ui: {
+      element_prefix: "note2",
+      key: "s"
     },
-    'params': {
-      'amp': 0.6,
-      'modulation_frequency': 220,
-      'depth': 40,
-      'carrier': 260
+    params: {
+      amp: 0.6,
+      modulation_frequency: 220,
+      depth: 40,
+      carrier: 260
     }
   },
   {
-    'ui': {
-      'element_prefix': "note3",
-      'key': "d"
+    ui: {
+      element_prefix: "note3",
+      key: "d"
     },
-    'params': {
-      'amp': 0.5,
-      'modulation_frequency': 413,
-      'depth': 49,
-      'carrier': 462
+    params: {
+      amp: 0.5,
+      modulation_frequency: 413,
+      depth: 49,
+      carrier: 462
     }
   },
   {
-    'ui': {
-      'element_prefix': "note4",
-      'key': "f"
+    ui: {
+      element_prefix: "note4",
+      key: "f"
     },
-    'params': {
-      'amp': 0.6,
-      'modulation_frequency': 20,
-      'depth': 338.165,
-      'carrier': 358.165
+    params: {
+      amp: 0.6,
+      modulation_frequency: 20,
+      depth: 338.165,
+      carrier: 358.165
     }
   },
   {
-    'ui': {
-      'element_prefix': "note5",
-      'key': "w"
+    ui: {
+      element_prefix: "note5",
+      key: "w"
     },
-    'params': {
-      'amp': 0.3,
-      'modulation_frequency': 1000,
-      'depth': 100,
-      'carrier': 1100
+    params: {
+      amp: 0.3,
+      modulation_frequency: 1000,
+      depth: 100,
+      carrier: 1100
     }
   }
 ];
