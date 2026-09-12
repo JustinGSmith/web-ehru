@@ -22,24 +22,45 @@ function connect_sliders (context) {
   }
 }
 
-function connect_sensors(context) {
-  const gyro_elt_x = context.document.getElementById("gyro_sensor_x")
-  const gyro_elt_y = context.document.getElementById("gyro_sensor_y")
-  const gyro_elt_z = context.document.getElementById("gyro_sensor_z")
+function header_row() {
+  const row = document.createElement("tr");
+  const topic_header = document.createElement("th");
+  topic_header.append("topic")
+  row.append(topic_header);
+  const message_header = document.createElement("th");
+  message_header.append("message");
+  row.append(message_header);
+  return row;
+}
 
-  return (sensor_context) => {
-    sensor_context.set_gyro_callback((gyroscope, evt) => {
-      gyro_elt_x.value = gyroscope.x;
-      gyro_elt_y.value = gyroscope.y;
-      gyro_elt_z.value = gyroscope.z;
-    });
+function connect_debug_region(context) {
+  const debug_div = context.document.getElementById("log")
+  function embed_on (log_object, place) {
+    const target = place || debug_div;
+    Array.from(target.children).forEach(c => c.remove());
+    target.append(header_row());
+    for (const [topic, contents] of Object.entries(log_object)) {
+      const row = document.createElement("tr");
+      const topic_data = document.createElement("td");
+      topic_data.append(topic)
+      row.append(topic_data);
+      const message_data = document.createElement("td")
+      if (typeof(contents) === 'string') {
+        message_data.append(contents);
+      } else {
+        embed_on(contents, message_data);
+      }
+      row.append(message_data);
+      target.append(row);
+    }
   }
+  return embed_on;
 }
 
 function init(context) {
   return {
     connect_sliders: connect_sliders(context),
-    connect_sensors: connect_sensors(context)
+    debug: connect_debug_region(context)
   }
 }
 

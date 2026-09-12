@@ -1,7 +1,6 @@
 import fm from './fm.js'
 import keys from './keys.js'
 import gui from './gui.js'
-import sensor_access from './sensors.js'
 
 const orchestra_data = [
   {
@@ -73,9 +72,6 @@ function create_orchestra () {
   const voice = fm.init(window.AudioContext || window.webkitAudioContext);
   const bind_key = keys.init(window);
   const display = gui.init(window);
-  const sensors = sensor_access.init(window);
-
-  display.connect_sensors(sensors);
 
   orchestra_data.forEach((spec) => {
     const instance = voice(spec.params);
@@ -83,6 +79,12 @@ function create_orchestra () {
     bind_key(spec.ui, instance);
     display.connect_sliders(spec.ui, instance);
   });
+
+  // display.debug({
+  //   meta: {
+  //     child: "simple debug"
+  //   }
+  // })
 
   return orchestra;
 }

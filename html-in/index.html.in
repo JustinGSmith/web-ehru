@@ -16,17 +16,10 @@
       instrument_ui(note5, w)
     </div>
 
-    <div class="sensors">
-      <label for="sensors">sensors</label>
-      <div class="gyroscope">
-        <label for="gyroscope">gyroscope</label>
-        <label for="x">x</label>
-        <input name="gyro_sensor_x", id="gyro_sensor_x" />
-        <label for="y">y</label>
-        <input name="gyro_sensor_y", id="gyro_sensor_y" />
-        <label for="z">z</label>
-        <input name="gyro_sensor_z", id="gyro_sensor_z" />
-      </div>
+    <div class="debug">
+      <label for="debug">debug</label>
+      <table id="log" class="log" border="1 px">
+      </table>
     </div>
 
     <script type="module", src="scripts/fm.js"></script>
